@@ -1,0 +1,17 @@
+.container{
+    padding: 3%;
+    text-align: center;
+    align-items: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar {
+    color: white;
+    background-color: rgb(103, 169, 210);
+}
+
+.button-area{
+    display: flex;
+    justify-content: center;
+}

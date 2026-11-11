@@ -1,5 +1,27 @@
 <?php
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['status'] != true) {
+        header("Location: login.php?message=not_logged_in");
+        exit();
+    }
 
+    include "backend/connect.php";
+
+    $id = $_SESSION['id'];
+
+    $stmt = mysqli_prepare($connect, "SELECT username, email FROM account WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $account = mysqli_fetch_assoc($result);
+
+    if (!$account) {
+        header("Location: backend/logout.php");
+        exit();
+    }
+
+    $username = $account['username'];
+    $email    = $account['email'];
 ?>
 
 <!DOCTYPE html>
@@ -37,7 +59,16 @@
                             <i class="bi bi-person-circle text-secondary" style="font-size: 4rem;"></i>
                             <h3 class="fw-bold mt-2">My Profile</h3>
                             <?php
-                            // put your alert output here
+                                if (isset($_GET['message'])) {
+                                    $message = $_GET['message'];
+                                      if ($message == 'used_username') {
+                                        echo '<div class="alert alert-warning" role="alert">Username is already used, please use another username</div>';
+                                    } elseif ($message == 'edit_successful') {
+                                        echo '<div class="alert alert-success" role="alert">Account is updated successfully</div>';
+                                    } elseif ($message == 'failed') {
+                                        echo '<div class="alert alert-danger" role="alert">Failed to update account</div>';
+                                    }
+                                }
                             ?>
                         </div>
                         <hr class="mb-4">
@@ -45,11 +76,11 @@
                             <input type="hidden" name="id" value="<?php echo "$id" ?>">
                             <div class="mb-3">
                                 <label class="form-label text-muted fw-semibold">Username</label>
-                                <input class="form-control bg-light" name="username"  value="<?php echo "placeholder username"; ?>">
+                                <input class="form-control bg-light" name="username"  value="<?php echo $username; ?>">
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-semibold">Email</label>
-                                <input class="form-control bg-light" name="email" value="<?php echo "placeholder email"; ?>">
+                                <input class="form-control bg-light" name="email" value="<?php echo $email; ?>">
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-semibold">Password</label>

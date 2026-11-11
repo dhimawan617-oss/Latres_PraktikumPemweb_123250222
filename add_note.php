@@ -1,5 +1,10 @@
 <?php
-
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['status'] != true) {
+        header("Location: login.php?message=not_logged_in");
+        exit();
+    }
+    $id_account = $_SESSION['id'];
 ?>
 
 <!DOCTYPE html>

@@ -1,5 +1,18 @@
 <?php
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['status'] != true) {
+        header("Location: login.php?message=not_logged_in");
+        exit();
+    }
+    include 'backend/connect.php';
 
+    $id = $_GET['id'];
+
+    $stmt = mysqli_prepare($connect, "SELECT title, content FROM notes WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $note   = mysqli_fetch_assoc($result);
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +53,7 @@
         <h2>Edit Your Note</h2>
         <div class="card card-body mt-4" id="form-content">
             <form method="POST" action="backend/process_edit_note.php">
-                <input type="hidden" name="id" value="<?php echo "put $id" ?>">
+                <input type="hidden" name="id" value="<?php echo $id?>">
                 <div class="mb-3">
                     <label for="nama" class="form-label">Title</label>
                     <input type="text" class="form-control" name="title" id="title" required value="<?php echo "placeholder title" ?>">

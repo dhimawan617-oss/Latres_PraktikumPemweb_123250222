@@ -1,5 +1,27 @@
 <?php
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['status'] != true) {
+        header("Location: logout.php?message=not_logged_in");
+        exit();
+    }
 
+    include "backend/connect.php";
+
+    $id = $_SESSION['id'];
+
+    $stmt = mysqli_prepare($connect, "SELECT username, email FROM account WHERE id = ? ");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $account = mysqli_fetch_assoc($result);
+
+    if (!$account) {
+        header("Location: backend/logout.php");
+        exit();
+    }
+
+    $username = $account['username'];
+    $email = $account['email'];
 ?>
 
 <!DOCTYPE html>
